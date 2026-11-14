@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio Blueprint</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: sticky contents rail beside one readable column; tables scroll inside their own wrappers. */
+:root {
+  --bg: #F6F7F9;
+  --surface: #FFFFFF;
+  --fg: #14171F;
+  --muted: #5A6272;
+  --line: #E2E5EB;
+  --accent: #4538C8;
+  --accent-soft: #ECEAFD;
+  --good: #136C3A;   --good-bg: #E3F4EA;
+  --warn: #8A5A00;   --warn-bg: #FBEFD0;
+  --bad: #A12A2A;    --bad-bg: #FBE4E4;
+  --info: #1F4E8C;   --info-bg: #E3EDFA;
+  --font-head: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D0F14; --surface: #151821; --fg: #E8EAF0; --muted: #9AA1B2; --line: #262B38;
+    --accent: #A49CFF; --accent-soft: #232042;
+    --good: #6FD39A; --good-bg: #14301F; --warn: #E8B85A; --warn-bg: #33270E;
+    --bad: #F08A8A; --bad-bg: #3A1818; --info: #8DB8F0; --info-bg: #14263F;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D0F14; --surface: #151821; --fg: #E8EAF0; --muted: #9AA1B2; --line: #262B38;
+  --accent: #A49CFF; --accent-soft: #232042;
+  --good: #6FD39A; --good-bg: #14301F; --warn: #E8B85A; --warn-bg: #33270E;
+  --bad: #F08A8A; --bad-bg: #3A1818; --info: #8DB8F0; --info-bg: #14263F;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15.5px; line-height: 1.6; }
+.page {
+  max-width: 1240px; margin: 0 auto;
+  padding-block: 28px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px;
+}
+@media (min-width: 1000px) {
+  .page { grid-template-columns: 230px minmax(0, 1fr); gap: 48px; }
+}
+.rail { display: none; }
+@media (min-width: 1000px) {
+  .rail { display: block; position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow: auto; font-size: 13.5px; }
+  .mobile-toc { display: none; }
+}
+.rail h2, .mobile-toc summary { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; font-weight: 500; }
+.rail a, .mobile-toc a { display: block; padding: 5px 10px; color: var(--muted); text-decoration: none; border-left: 2px solid var(--line); line-height: 1.35; }
+.rail a:hover, .mobile-toc a:hover { color: var(--fg); border-left-color: var(--accent); }
+.rail a.on { color: var(--fg); border-left-color: var(--accent); background: var(--accent-soft); }
+.mobile-toc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.mobile-toc summary { cursor: pointer; margin: 0; }
+.mobile-toc[open] summary { margin-bottom: 10px; }
+
+.hero { border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 22px 24px; display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.hero b { font-family: var(--font-head); font-size: 15px; display: block; }
+.hero span { color: var(--muted); font-size: 13.5px; }
+.pill { font-family: var(--font-mono); font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--good-bg); color: var(--good); white-space: nowrap; }
+
+.doc { min-width: 0; }
+.doc h1 { font-family: var(--font-head); font-size: clamp(1.9rem, 4.2vw, 2.7rem); line-height: 1.12; letter-spacing: -0.02em; margin: 6px 0 14px; text-wrap: balance; font-weight: 600; }
+.doc h2 { font-family: var(--font-head); font-size: clamp(1.4rem, 2.6vw, 1.8rem); letter-spacing: -0.01em; line-height: 1.2; margin: 56px 0 14px; padding-top: 22px; border-top: 1px solid var(--line); text-wrap: balance; scroll-margin-top: 16px; font-weight: 600; }
+.doc h3 { font-family: var(--font-head); font-size: 1.12rem; margin: 30px 0 8px; font-weight: 600; scroll-margin-top: 16px; }
+.doc h4 { font-size: .95rem; margin: 22px 0 6px; }
+.doc p, .doc li { max-width: 78ch; }
+.doc p { margin: 0 0 12px; }
+.doc ul, .doc ol { margin: 0 0 14px; padding-left: 1.25em; }
+.doc li { margin: 4px 0; }
+.doc a { color: var(--accent); text-underline-offset: 2px; }
+.doc hr { border: 0; border-top: 1px solid var(--line); margin: 36px 0; }
+.doc code { font-family: var(--font-mono); font-size: .86em; background: var(--accent-soft); color: var(--fg); padding: 1px 6px; border-radius: 5px; }
+.doc pre { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+.doc pre code { background: none; padding: 0; font-size: inherit; }
+.doc blockquote { margin: 0 0 14px; padding: 2px 16px; border-left: 3px solid var(--accent); color: var(--muted); }
+.doc strong { font-weight: 600; }
+
+.tw { overflow-x: auto; margin: 6px 0 20px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.tw table { border-collapse: collapse; width: 100%; font-size: 13.5px; line-height: 1.5; }
+.tw th { text-align: left; font-family: var(--font-mono); font-weight: 500; font-size: 11.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); background: var(--bg); white-space: nowrap; position: sticky; top: 0; }
+.tw td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; min-width: 120px; }
+.tw td:first-child { font-weight: 500; }
+.tw tr:last-child td { border-bottom: 0; }
+.tw td p { margin: 0; }
+.tag { font-family: var(--font-mono); font-size: 11.5px; font-weight: 500; letter-spacing: .03em; padding: 2px 8px; border-radius: 999px; white-space: nowrap; display: inline-block; }
+.tag.use { background: var(--good-bg); color: var(--good); }
+.tag.opt { background: var(--info-bg); color: var(--info); }
+.tag.rej { background: var(--bad-bg); color: var(--bad); }
+.tag.pen { background: var(--warn-bg); color: var(--warn); }
+.theme-btn { font: inherit; font-family: var(--font-mono); font-size: 12px; background: var(--surface); color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.theme-btn:hover { color: var(--fg); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media print { .rail, .mobile-toc, .theme-btn { display: none; } }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600&display=swap">
+
+<div class="page">
+  <aside class="rail" aria-label="Contents"><h2>Contents</h2><nav id="toc-rail"></nav></aside>
+  <main class="doc-wrap" style="min-width:0">
+    <div class="hero">
+      <div><b>Phase 1 is complete</b><span>Investigation and plan only. No production code written. Phase 2 starts when you send its prompt.</span></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="pill">Revision 3 · 2026-11-12</span><button class="theme-btn" id="themeBtn" type="button">Toggle theme</button></div>
+    </div>
+    <details class="mobile-toc" id="mtoc"><summary>Contents</summary><nav id="toc-mobile"></nav></details>
+    <article class="doc" id="doc" style="margin-top:18px"></article>
+  </main>
+</div>
+
+<script type="text/plain" id="md">
+# Portfolio — Phase 1 Blueprint (investigation + plan, no production code)
+
+Status: DRAFT for owner review. Phase 2 has NOT started. No project files were modified; this document is the only file created.
+Date of investigation: 2026-11-12.
+Privacy note: personal contact details from the résumé are deliberately not reproduced here; they appear as [Email] / [Phone]. A phone number supplied later in chat is also kept out of this file.
+
+---
+
+## Revision 3 (2026-11-12) — FINAL for Phase 1: decisions locked, no open questions
+
+You asked me to stop asking and close Phase 1. Every previously open question is now answered by your replies or by a **stated default**. Defaults are not blockers; they are reviewed once at the start of Phase 2.
+
+### 3.1 Your answers, and what they change
+| Topic | Your answer | Effect on the plan |
+|---|---|---|
+| Unifex reference | "I don't have idea" | Unifex is treated as **foundation/inspiration only**; its licence is unknown, so **no Unifex code, copy or imagery is reused**. The site is built fresh. |
+| Eskoolia | You **built the Academics and Library modules completely** and helped create the project **KT (knowledge-transfer) material** | Eskoolia becomes a **"Built" flagship**: *Academics + Library modules* (owner-stated) plus the KT contribution, and tenancy/RBAC/Celery learning as supporting depth. **Your résumé currently says "implementation ownership is not claimed" — it contradicts this.** Update the résumé before launch so the two never disagree. The dashboard, Planning Studio, timetable and library screenshots you sent are consistent with these modules. I could not verify the claim myself (no Eskoolia repo access); the site words it as your statement and adds a "Verified by: [reference at Sria Infotech]" slot to fill. |
+| NXdesk | "In development; initial draft; more to come"; new screenshots (Helpdesk home inside the NXERP shell; NXERP login) | Labelled **"In development"** everywhere. Described as a **team product**; your role uses the résumé wording (analysis, requirements, specifications) **unless you add specifics in the Phase 2 content review**. No "shipped"/"launched" language. |
+| Permission | "I have all permissions from Sria Infotech" | Recorded as **owner-stated**. Keep the written confirmation on file. Even with permission, the site shows **no real customer data, emails or usernames** (see 3.3). |
+| Aarupa Matrix | Own future brand, prototype only; keep very limited | **Not a section, not a company claim.** At most one small footnote ("prototype of a future brand"). It is **removed from all screenshots** by default. |
+| Tech | Clean Architecture; Supabase for the database | **Supabase** (already on the résumé). **Clean Architecture** is partly evidenced: the Flutter app is feature-first (auth, booking, dashboard, home, hostel, location, payments, profile, search, settings, support, wishlist), with `presentation` in 11 features but `domain`/`data` layers in only a few. The site says **"feature-first architecture, clean-architecture layering in progress"** — not "Clean Architecture throughout". |
+| Hosting plans | HH admin/app hosted later; app is priority | Case study states plainly: **staging backend; admin panel not hosted; Play Store launch pending**. |
+| LinkedIn | linkedin.com/in/rohandharlapally | Added to the contact section. GitHub: github.com/rohanaarup. |
+
+### 3.2 Defaults applied to the remaining unanswered points
+| Point | Default |
+|---|---|
+| Portfolio hosting/domain | Static export on Vercel or Cloudflare Pages; domain chosen in Task 2.0 (not a blocker). |
+| Phone number | **Click-to-reveal** link; never plain text; email + LinkedIn + GitHub are the primary paths. |
+| RD logo | The **minimal variant (`3.png`)** is canonical for nav/favicon; the glowing variant is not used. A vector or transparent export is a Phase 2 input (fallback: I trace a clean SVG from the minimal mark and you approve it). |
+| Hostel Hunt logo | Wordmark logo (`4.png`) in the case-study header; the app's orange rounded-square icon inside device frames. |
+| Notes-only skills | **Railway, Ollama, Trello, Vite, SSH, Neon: omitted** (no confirmation). Re-add only if you provide proof. |
+| "Pixel fade" effect | React Bits **Pixel Transition**, optional, on one project-card hover. |
+| Hostel Hunt repo state | The case study states numbers **per branch** (e.g. "on the phase-9 branch: 1,070 test functions"), links to the branch, and notes that `main` is behind. Merging first is recommended, not required. |
+| Eskoolia / NXdesk visuals | Used only with permission (stated) **and** after redaction (3.3). |
+| Missing credibility items | Hostel Hunt repo links (public), GitHub, LinkedIn: present. Live demo link: **none** (backend cold-starts >70 s; admin not hosted). |
+
+### 3.3 New screenshots (NXERP) and the redaction rule
+- **Helpdesk home inside the NXERP shell** shows the account label and greeting with a **username derived from your personal email address** ("Hey, …"). **Blur/crop it** (and any email, name or ticket counts tied to real people) before publishing.
+- **NXERP login page** shows the NX mark, tagline "Smarter Business. Stronger Tomorrow.", and an orange-on-charcoal look. It is the best single image for the NXdesk page and a good palette cue (warm amber accent, charcoal, cream).
+- **Redaction rule for every employer/product screenshot:** no real names, emails, usernames, customer/student data, localhost URLs or internal hostnames. Replace with sample data or blur.
+
+### 3.4 Updated status of the four case studies
+| Case study | Status chip | Role wording (publish-ready) |
+|---|---|---|
+| Hostel Hunt | *Staging · pre-launch · unmerged branch work* | Solo developer — backend, admin panel, mobile app. |
+| Eskoolia | *Built (owner-stated) · employer-verifiable* | Built the **Academics** and **Library** modules; contributed to the project KT; worked with the tenancy and RBAC/ABAC model, Celery/Redis. |
+| NXdesk / NXERP | *In development · team product* | Requirements, access-control/architecture analysis, Helpdesk workflow specifications (résumé wording). |
+| Aarupa Matrix | *Prototype · not presented as a company* | Footnote only. |
+
+**Phase 1 is complete.** Phase 2 starts only when you send the Phase 2 prompt.
+
+---
+
+## Revision 2 (2026-11-12) — what changed after your new inputs
+
+Still Phase 1: nothing in the template folder was modified. The two public repos were cloned read-only (shallow) into a scratch directory; no repo code was run.
+
+### 2.1 Eskoolia is now a flagship (corrects Revision 1)
+Revision 1 listed Eskoolia as a compact card with no page. That under-weighted about 1.5 months of work and the concepts you learned there (tenancy, RBAC/ABAC, Celery/Redis, performance). **New plan: three equal flagship case studies — Hostel Hunt, NXdesk (NXERP + Helpdesk) and Eskoolia — each with its own page.**
+What does *not* change is the wording rule from your own résumé: Eskoolia is described as **investigation and learning, with "implementation ownership not claimed"**, unless you give me evidence of specific changes you made (commits, tickets, PRs, a reviewer who can confirm). Prominence ≠ ownership claim. The Eskoolia page will be built from **your own notes and diagrams** (tenant context, scoped querysets, isolation, role/permission model, worker/scheduler discovery, N+1/perf findings), plus a clear "What I personally changed" box that stays empty unless you fill it truthfully.
+
+### 2.2 Repo verification (GitHub account `rohanaarup`, authenticated)
+| Metric | Résumé | `main` | `phase-9-admin-panel` (unmerged, last commit 2026-11-12) |
+|---|---|---|---|
+| Django app directories | 12 | 11 | 13 (includes `core`) |
+| Migrations | ~40 | 35 | 40 |
+| Backend test functions | ~1,000 | 392 | 1,070 |
+| Backend test files | 62 | 44 | 62 |
+| Admin-panel test files | 8 | 8 | 12 |
+| Flutter test files | 35 | 35 (app repo `main`) | not checked |
+
+- **Reading:** the résumé numbers match the **unmerged phase-9 branch**, not `main`. The rent/stay screens you sent (billing rule, stays and dues, offline payment, payment calendar, vacate, analytics, reminders) correspond to the `stays` and `notifications` apps and the `phase-4…phase-9` branches. `main` stops at 2026-10-19. **Merge or tag a snapshot before the portfolio links to the repo**, or recruiters will count 392 tests, not 1,000+. Also reconcile "12 apps" vs 13 directories (wording, not a big deal).
+- **Versions on `main` match the résumé:** Django 5.2.15, DRF 3.17.1, SimpleJWT 5.5.1, drf-spectacular 0.30.0, Next.js 16.2.11, React 19.2.4, Tailwind 4, TanStack Query 5, Axios, Vitest; Flutter: Riverpod 2.6, go_router 14.8, razorpay_flutter, sentry_flutter. (Python 3.13 not verified.)
+- **Candour in the repo:** `KNOWN_GAPS.md` (reviewed 2026-10-18) says production ran old code with DEBUG on, the admin site was not hosted, the staging payment test had not been run, the Android app id was still `com.example…`, and a paid bed is never released on cancellation. The résumé's "tested the flow on a physical Android device" is **not recorded as live-proven** there — please confirm. The register may be out of date (it is 25 days old), so re-check production's DEBUG state before any public link.
+- **Secrets:** a shallow scan of both default branches found only localhost/test-fixture database URLs — no live keys. **Git history was not scanned**, and a `fix/secret-key-leak…` branch exists; run a full-history scan (e.g. gitleaks) before promoting the repos.
+- **Licence:** neither repo has a LICENSE file (all rights reserved by default). Linking is fine; decide whether to add one.
+- **Live backend:** `/healthz` returned 200, but the first request timed out at 70 s (free-tier cold start); `/` returns 404. The portfolio must **not** depend on live API calls.
+- **Neon:** the app repo has a Neon SQL session file (no credentials in it) — modest evidence. Other notes-only items (Railway, Ollama, Trello, Vite, Clean Architecture, SSH) still have no evidence; the admin panel uses Next.js, not Vite.
+
+### 2.3 Resources resolved
+| Resource | What the official page shows | Decision |
+|---|---|---|
+| Logo Motion — logomotion.design | Hosted web tool that turns an uploaded logo into short vertical videos ("Logo Match Cut", "Pulse"). Pricing/licence/account **not stated**. Not a web component. | **OPTIONAL, outside the site build** (possible social/OG clip of the RD mark, only after checking terms). Not a dependency. |
+| Animmasterlib — animmasterlib.dev | **Paid** (PRO $4.99, Premium $8 as shown), ~300 components delivered as a Google Drive zip, mostly HTML/CSS/JS; licence and accessibility **not stated**; no versioned package. | **REJECT** for the build (paid, unversioned, unknown licence). I will not buy it. If you buy it, send me the licence text. |
+| "Pixel Fades" — pixelfade.com | A **defunct game-dev team's** site. Unrelated. | **REJECT** (wrong resource). |
+| pixelied.com/features/fade-image | Online image editor opacity tool (not a web component); free tier limits unclear. | **Not needed**; usable manually for image prep. |
+| Intended "pixel fade" effect | Closest real component: React Bits **Pixel Transition** (verified in registry). | **OPTIONAL** (project-card hover). Tell me if you meant something else. |
+
+### 2.4 Assets: what the 33 new screenshots show
+- **Hostel Hunt student app, dark theme** (home variants, My stay, bookings, pay rent, payment success/failed/confirming, receipt, notifications, lock-screen reminders, calendar, analytics, history, booked-in, vacate) and **admin panel** (stays and dues, billing rule, offline payment modal). Strong, consistent warm-black UI with a red primary and amber/green status colours.
+- **Older light-theme app screens** (orange header, "Aarupa Matrix" logo next to Hostel Hunt, real-looking listings).
+- **NXDESK landing page** (one sign-in, role-based access, two product cards: NXERP and Sria Helpdesk).
+- **Eskoolia** (dashboard with School Tenancy / Roles & Permissions modules, Planning Studio, clash-safe timetable, library periods skeleton).
+
+**Must fix before any of these are published**
+1. The admin "Billing rule" preview and the "Request to vacate" screen show **raw template tokens** (`{{ d.label }}`, `{{ r.label }}`, `{{ summary }}`) — they look like unrendered mock-ups (the strings are not in the code). Re-capture from a running build.
+2. One payment screen has a **"Prototype: continue to confirmation"** link — label such screens "design prototype", not "running app".
+3. Rent/stay screens depict features on **unmerged branches**; label them "Phases 4–9 (branch work)" via the evidence ledger.
+4. Listings use what may be **real businesses** (e.g. named hostels) and one shows a **third-party signboard photo** ("Sri Tanuja Ladies PG"). Replace with neutral sample data for public use.
+5. The older app screens show an **"Aarupa Matrix" brand**. Is it yours? If not yours, remove or get permission.
+6. **Logo mismatch:** in the app, Hostel Hunt's icon is an orange rounded square; the logo you supplied is an orange "D/door" mark with a tagline. Pick the canonical one.
+7. **Employer/third-party material:** NXDESK and Eskoolia screenshots belong to Sria Infotech or its client. "I have access" is not the same as permission to publish (see Q3). The Eskoolia shots also show a localhost URL and sample people; crop or re-capture with neutral data.
+8. **NX logo (corrected in Rev. 3):** the supplied `5.png` NX mark is the **NXERP brand** (it appears with the "NXERP" wordmark on the NXERP login page and in the NXERP-branded Helpdesk shell). In the NXDESK launcher the Helpdesk card shows the NX mark and the NXERP card a blue "E" tile, so NXDESK's own card icons are inconsistent with the login branding — treat NXERP/NX as one brand for the portfolio.
+9. **Authorship of NXDESK:** the screenshot shows an implemented launcher/landing page. Your résumé describes the shared-login/launcher idea as an assessed option and the Helpdesk changes as specifications. Who built this page? Until you tell me, the site will say "analysis and design" only.
+
+### 2.5 Design implications
+- Hostel Hunt's real palette is **warm-black with red/amber/green** (not the cool lavender of the main site). The case study will use a **project-scoped palette** taken from the app, which makes the page feel like the product.
+- The strongest visuals are the phone screens: a staggered, device-framed "rent lifecycle" sequence (due → pay → confirming → receipt → reminder) can tell the story better than the planned concurrency explainer alone. Both stay; the explainer remains illustrative.
+- Contact: the phone number you sent is kept out of this repo. If you want it public, I'd show it behind a click-to-reveal link, not as plain text.
+
+How to read this: **Fact** = observed in files or on an official page. **Interpretation** = my judgement. **Unverified** = could not be confirmed; do not rely on it.
+
+---
+
+## 1. Repository audit
+
+### Facts
+| Item | Finding |
+|---|---|
+| Location | `Portfolio 2 website code  zip/Portfolio/` (folder name has a double space; lives inside OneDrive) |
+| Git | Not a git repository. No history, no pre-existing modifications to preserve. |
+| Package manager / build | None. No `package.json`, lockfile, bundler, tests, README or LICENSE file. |
+| Content | One page: `index.html` (~108 KB, ~2,300 lines) + `assets/` (4.4 MB total). |
+| Identity | Title/meta say **"Unifex – Digital Agency & Creative Portfolio HTML Template"** — a third-party agency template, not the owner's work. |
+| Stack | Bootstrap 5 + jQuery 3.7.1 + GSAP (local copies; ScrollSmoother 3.11.4, ScrollTrigger, SplitText, ScrollToPlugin) + AOS + Swiper + Magnific Popup + jquery.marquee + PureCounter + Phosphor/FontAwesome icons + custom "magic cursor". |
+| Sections in `index.html` | Preloader → hero ("developer" oversized word + cut-out portrait) → about → services (black) → portfolio (4 items) → testimonials → brand marquee → large CTA/footer. |
+| Placeholder content | Template copy throughout ("Hello! I'm noah Niko… from London", fake address/phone/email, stock team/testimonial photos). |
+| Broken/incomplete | `favicon.png` referenced but absent; `index-2.html` / `index-3.html` linked but absent; an unprocessed template token `@@brandipClass` (line ~1888); Cloudflare `__cf_email__` leftover; mobile menu `<nav>` is empty in markup. |
+| Motion/a11y | Zero `prefers-reduced-motion` handling in CSS or JS. Preloader has a fixed delay. Three overlapping motion systems (GSAP, AOS, jQuery marquee) plus a cursor effect. |
+| Run/build/test | Nothing to build. Serve statically (e.g. `python -m http.server`). No tests exist. |
+
+### Not verified
+- I loaded the page in headless Chrome, but only the preloader ("LOADING") rendered in my screenshots; I did **not** visually inspect the post-preloader design or mobile layout. The teardown below is from markup/CSS/JS structure.
+- The template's licence is unknown (no LICENSE file). If it is a purchased marketplace template, its code, images and copy cannot simply be reused for a public site without the right licence.
+
+### Assessment (interpretation)
+- **Strengths:** a strong typographic hero idea (oversized word + portrait overlap), clear dark/light section rhythm, GSAP-based choreography already structured.
+- **Risks/debt:** agency framing (services, testimonials, client logos) does not fit an early-career backend engineer; jQuery + Bootstrap + AOS + GSAP is redundant; no accessibility baseline; unknown licence; OneDrive sync will fight a future `node_modules`.
+- **Recommended foundation:** treat this folder as **reference only**; build the real site in a **new Next.js (App Router) + TypeScript + Tailwind project**, outside OneDrive (or with `node_modules` excluded), under git from the first commit. Rationale: (a) the résumé lists Next.js/React/TS/Tailwind, so the site doubles as proof of skill; (b) React Bits, Skiper UI and Vengeance UI are React/Tailwind/shadcn-style, so they cannot be used cleanly in a jQuery/Bootstrap page; (c) static export keeps hosting cheap and fast. Alternative considered: Astro (excellent performance) — rejected only because it moves away from the owner's own stack.
+
+---
+
+## 2. Reference teardown
+
+The user's brief refers to a "selected experienced-developer portfolio" (URL/repo). **None was supplied**; I have assumed the Unifex folder in the workspace is that reference. *Please confirm (Question 1).*
+
+| Reuse conceptually | Improve | Do not copy |
+|---|---|---|
+| Oversized display type that interacts with the portrait | Replace agency sections with evidence sections (case study, engineering decisions, honest status labels) | Template copy, stock imagery, testimonials, client-logo marquee |
+| Alternating dark/light section rhythm | Make motion purposeful and optional (reduced-motion, no blocking preloader) | Blocking 2-second preloader |
+| Marquee of capabilities (as a quiet stack strip) | One motion system instead of three | Magic cursor, AOS, jQuery plugins |
+| Single large closing call-to-action | Real project-detail pages (reference has none) | Any Unifex code/asset without a verified licence |
+
+Register warning (interpretation): the reference speaks as a seasoned agency lead. The owner is a 2026 graduate and intern; the site must read as **credible and precise**, not senior-sounding.
+
+---
+
+## 3. Verified content model
+
+Source of truth: the résumé PDF. Items from the supplementary notes that are not in the résumé are listed separately and are **not publishable until evidenced**.
+
+### 3.1 Publishable (résumé-backed)
+- **Name:** Rohan Dharlapally. **Headline (résumé):** Backend Software Engineer — Python · Django · PostgreSQL. **Location:** Hyderabad, Telangana. **Contact:** [Email], [Phone] (see Question 6).
+- **Summary:** 2026 CS graduate; multi-application Django REST platform with Flutter and Next.js clients; JWT/OTP auth, PostgreSQL modelling, tenant-scoped access, booking concurrency, Razorpay **test-mode** workflows, automated testing, staging operations; company experience in Frappe/ERPNext access-control and architecture analysis and a Django/PostgreSQL investigation in a school ERP.
+- **Experience:** App Developer Intern, Sria Infotech, Jan 2026 – present.
+  - *NXERP / NXdesk (Frappe)* — architecture/authorization analysis, modular-platform options, Helpdesk workflow **specifications (requirements/design, not shipped)**, delivery/governance material.
+  - *Eskoolia (school ERP)* — codebase and schema investigation (~15 modules), performance/multi-tenancy/Celery-Redis investigation; **"implementation ownership is not claimed"**.
+  - *Enterprise API & workflow exposure* — Project Budgeting/HRMS API **analysis (not a completed integration)**; Odoo 19 Accounting usage.
+- **Project — Hostel Hunt** (solo; pre-launch/staging; **Play Store launch has not occurred**): Django 5.2/DRF backend (12 apps), Next.js 16 owner dashboard, Flutter/Riverpod student app; versioned `/api/v1` + OpenAPI; SimpleJWT + email OTP; tenant scoping; UUID keys, constraints, GIN indexes, ~40 migrations; `select_for_update`/`SKIP LOCKED` booking holds; Razorpay sandbox (HMAC webhooks, idempotent confirmation, replay utility, tested on a physical Android device); PostgreSQL transactional outbox + cron worker (chosen over Celery/Redis); GitHub Actions CI, Render, Gunicorn, encrypted `pg_dump` backups, Sentry, Locust; secret-exposure incident found and rotated. Test footprint is **self-reported**: ~1,000 backend test functions / 62 files, 35 Flutter test files, 8 admin test files.
+- **Skills:** as grouped in the résumé, including its own "exposure" qualifiers (Celery, Docker, Playwright, Vue).
+- **Education:** B.Tech CSE (AI & ML), Malla Reddy College of Engineering, 2022–2026; Intermediate and SSC entries. **Certifications:** Infosys AI Foundation; Deloitte virtual internship (data mining). (Whether to show CGPA is the owner's choice.)
+
+### 3.2 Inconsistencies and unproven claims — need owner decision
+| # | Issue | Proposed handling |
+|---|---|---|
+| 1 | Notes mention Railway→Supabase migration, Neon, Ollama, Trello, Vite, "Clean/feature-first architecture", N+1 analysis, SSH, "message queues", "AI-assisted development with Claude Code" — **none are in the résumé**. | Show only what the owner can demonstrate. Notes themselves say to list Neon only if explainable. Default: omit until confirmed. |
+| 2 | Notes say "integrating a module into a larger ERP"; résumé says the Project Budgeting/HRMS work was analysis, not integration. | Use résumé wording. |
+| 3 | Notes call Eskoolia "real work experience… production-oriented"; résumé disclaims implementation ownership. | Present as "codebase investigation". |
+| 4 | Notes: "deployment", "production database configuration"; résumé: staging, pre-launch. | Say "staging". Never say "production" or "live users". |
+| 5 | Notes mention CI/CD, Vue as skills; the notes themselves warn against overclaiming. | Keep résumé's "exposure" labels. |
+| 6 | Logo files: `4.png` and `6.png` are **byte-identical** (same SHA-256) — both Hostel Hunt. | Treat as one asset. |
+| 7 | `5.png` is an "NX" mark. The résumé names NXERP/NXdesk but I cannot confirm this is that mark, and it is an employer product. | Do not publish until confirmed and cleared (Q3). |
+| 8 | No public links anywhere: no GitHub, LinkedIn, repo, staging URL, demo, screenshots. | Required for credibility (Q2, Q5). |
+| 9 | Résumé counts (12 apps, ~40 migrations, ~1,000 tests) are self-reported. | Verify against the repo before publishing, or keep "approximately / self-reported". |
+
+### 3.3 Supplied assets (inspected)
+| Asset | Facts | Notes |
+|---|---|---|
+| `1.jpg` portrait | 1122×1402, 51 KB, low-key black-and-white, half-lit face on black | Merges seamlessly into a near-black page. Fine up to ~560 CSS px wide at 2×; request the original if a larger hero is wanted. |
+| `2.png` RD logo (glow) | 1536×1024 raster, black background, 3D metal letters, orange orbit/moon, particles | Heavy decorative effect; not usable as a nav mark; not transparent. |
+| `3.png` RD logo (minimal) | 1536×1024 raster, flat white/lavender on near-black navy, thin orbit arc | Best fit for the design direction; needs a vector/transparent export. |
+| `4.png`/`6.png` Hostel Hunt | 1983×793, orange mark + wordmark + tagline "Find your space. Feel at home.", white background | Matches the résumé project. Tagline is not in the résumé (fine). |
+| `5.png` NX | 1774×887, transparent, blue/white mark with pixel dissolve | **Identified (Rev. 2): the Sria Helpdesk icon**, not NXERP's. Employer product: permission needed. Edge fringing suggests a cut-out; check on dark and light backgrounds. |
+
+Provenance (interpretation): the RD and NX images look AI-generated. If so, confirm the generating tool's terms allow use as a brand mark.
+
+---
+
+## 4. Resource matrix
+
+Evidence quality: official page content was retrieved through a summarising fetch tool, so licence details marked *page-stated* were not read in the licence file itself. Nothing below has been installed. Nothing was bought, no accounts created.
+
+| Resource | Official source (verified) | Purpose | Licence / access | Compat. | Cost / API | Perf / a11y risk | Decision | Acquisition |
+|---|---|---|---|---|---|---|---|---|
+| Lenis | lenis.dev · github.com/darkroomengineering/lenis | Smooth scroll | MIT (page-stated); npm `lenis` (1.3.27 per page; confirm at install) | Vanilla, React, Vue; documented GSAP ScrollTrigger sync | Free | Low. `respectReducedMotion` defaults on. Known limits: iframes, Safari 60 fps cap | **USE** (replaces ScrollSmoother) | Not installed |
+| GSAP + ScrollTrigger/SplitText | gsap.com | Choreographed reveals, scroll storytelling | Page states "100% free" incl. plugins; **terms of use not read** | Framework-agnostic; React via `@gsap/react` | Free | Medium JS weight; must gate on reduced-motion | **USE** (single animation engine). Read the Terms before Phase 2. | Template has old local copies (3.11.4); replace with npm |
+| Vanta.js | vantajs.com · github.com/tengbao/vanta | 3D animated backgrounds | MIT (page-stated); npm `vanta` | Needs three.js (docs pin r134) or p5 | Free | **High**: WebGL weight, "not all effects work on mobile", no visible release dates, 67 open issues | **REJECT** | n/a |
+| React Bits | reactbits.dev · github.com/DavidHDev/react-bits | Copy-in animated React components | **MIT + Commons Clause** (page-stated; free personal/commercial; clause text not read) | React; JS/TS × CSS/Tailwind variants; shadcn or jsrepo CLI | Free; a separate "Pro" tier exists (not used) | Per component; check each | **USE selectively** (1–3 components) after reading LICENSE | Not installed |
+| Dome Gallery | React Bits registry (`DomeGallery-TS-TW` exists; dep `@use-gesture/react`) | 3D draggable image dome | As React Bits | React | Free | Needs many images; gimmick risk; touch a11y | **REJECT for now** (owner has few visuals) | n/a |
+| Pixel Transition ("pixel fades"?) | React Bits registry (`PixelTransition-TS-TW`, no listed deps) | Pixelated reveal between two states | As React Bits | React | Free | Low–medium | **OPTIONAL** (project-card hover: logo ↔ screenshot). *"Pixel Fades" as a named product was not found* — Q4 | Not installed |
+| OriginKit | originkit.dev (title: "Free animated component library") | Animated components | **Unverified** — page fetch returned title only | Unknown | "Free" per title only | Unknown | **PENDING** manual review | Needs owner to open site and share licence/install steps |
+| Prompt Motion | prompt-motion.com | Gallery of motion videos + prompts (made with Claude) | "Videos and prompts belong to their creators" — per-entry terms | Not a library | Free to browse | None | **REFERENCE ONLY** (inspiration for motion briefs) | Nothing to install |
+| Logo Motion | logomotion.design (supplied by owner; the earlier Maxon match was wrong) | Logo → short vertical video | Pricing/licence **not stated** | Hosted tool, not a web component | Unknown | Video weight if embedded | **OPTIONAL, outside build** (see Rev. 2 §2.3) | Nothing to install |
+| Animmasterlib | animmasterlib.dev (supplied by owner) | ~300 prebuilt animated components | **Paid** ($4.99–$8 shown); licence **not stated** | Mostly HTML/CSS/JS, some React/Next; Drive zip, no package | Paid | Accessibility not stated | **REJECT** | Not purchased |
+| Skiper UI (spelled "Skipper" in brief) | skiper-ui.com | shadcn-style animated components | Mixed free + **Premium ($129 one-time per page)**; licence terms not read | Next.js, Tailwind, Motion | Paid tier needs spend | Medium | **OPTIONAL, free components only**; no purchase without approval | Not installed |
+| Vengeance UI | vengenceui.com (repo under GitHub account "Ashutoshx7") | Animated React components | "Open source" claimed; **licence not stated** | React/Next, shadcn CLI | Free (claimed) | Unknown | **OPTIONAL / low priority** (overlaps React Bits) | Not installed |
+| Scroll World | github.com/oso95/scroll-world | Agent skill that generates scroll-driven "fly-through" pages | MIT | Vanilla-JS engine; needs Python, ffmpeg, Monid + Higgsfield CLIs | **Paid generation** (README example ≈ $27 for 6 scenes) | **High**: video weight; accessibility not addressed | **REJECT** for this build (cost, weight, fit); reference only | n/a — needs explicit spend approval if ever wanted |
+| Taste skill | github.com/Leonxlnx/taste-skill | Agent skill for art-directed frontends | MIT | Claude Code plugin | Free | n/a | **OPTIONAL design guard** in Phase 2 | **Not available in this session** (not in skill list). Owner runs: `/plugin marketplace add Leonxlnx/taste-skill` then `/plugin install taste-skill@taste-skill` |
+| 21st.dev MCP | 21st.dev/mcp.md; `@21st-dev/cli` | Component search/generation | Licence **not stated** on page; free tier limited (`search` free; `get_component`/`generate` paid) | Claude Code | **API key + account required** | n/a | **OPTIONAL**; I will not create an account or use paid calls | **Not configured** (no 21st tools in this session). Owner runs `npx @21st-dev/cli@latest init --client claude`, creates key at 21st.dev/mcp, keeps it out of git |
+
+Net selection: **Next.js + Tailwind + GSAP + Lenis**, plus at most 1–3 React Bits components. Everything else is rejected, deferred or unverified. Rationale: one animation engine, minimal dependencies, no WebGL on the critical path.
+
+---
+
+## 5. Design directions and recommendation
+
+### Direction A — "Systems Noir" (recommended)
+Near-black canvas, editorial grotesk type with mono metadata, one cool accent. The low-key portrait and the minimal RD mark are already on near-black, so they integrate without boxes or cut-outs. Differentiation comes from **content design** (an evidence ledger and a concurrency explainer, §6), not from colour.
+### Direction B — "Paper Ledger"
+Warm off-white, serif display, mono annotations, "engineering notebook" feel; diagrams look excellent on paper. Rejected as primary: the portrait and both RD logos are dark-native and would need frames/containers, and it carries less of the premium-tech register recruiters expect for backend roles.
+### Risk of A (acknowledged)
+Dark developer sites are common. Mitigation: invert to a light "case-study paper" panel for the Hostel Hunt architecture diagram, and let the evidence ledger carry the identity.
+
+### Design system (proposal — values to be sampled from the final logo and contrast-checked in Phase 2)
+- **Typography:** Geist (UI/body), Geist Mono (metadata, labels), Instrument Serif italic for one or two emphasised words per screen. All are open-licence Google Fonts via self-hosted `next/font` (confirm licences at install). Fluid scale, display ~clamp(3rem, 9vw, 8.5rem), body 17–18 px, line-height 1.55.
+- **Palette (tokens):** `--bg #07070B`, `--surface #0E0E15`, `--line rgba(255,255,255,.09)`, `--text #EDEAF5`, `--muted #9794AB` (verify ≥ 4.5:1), `--accent` lavender sampled from RD mark (~#B7AEF2). **Hostel Hunt orange** exists only as a scoped token inside that case study. No gradients as decoration; no glass.
+- **Grid/spacing:** 12-col, max width 1280, 8-pt scale, generous section padding (clamp 96–160 px). Asymmetric editorial layouts allowed; text measure ≤ 68ch.
+- **Surfaces/borders/shadows:** flat surfaces separated by 1 px hairlines; shadows only for the single elevated card state; radius 12 px (cards), 999 px (chips).
+- **Interaction:** visible focus rings (accent, 2 px offset); hover = subtle translate/underline, never colour-only; links ≥ 44 px targets.
+- **Responsive:** mobile-first; portrait stacks above the name on phones; no horizontal scroll; explainer degrades to a static diagram under 640 px.
+- **Motion rules:** one engine (GSAP) + Lenis; durations 300–800 ms, easing `power3.out`; animate transform/opacity only; no blocking preloader; no custom cursor; every animation wrapped in a `prefers-reduced-motion` gate (Lenis `respectReducedMotion` stays on); ambient background (if any) is CSS/canvas ≤ 20 KB and paused when off-screen or reduced-motion.
+- **Budgets (targets to hold in Phase 2):** LCP < 2.5 s on throttled mobile; CLS < 0.1; initial-route JS ≲ 150 KB gzipped; Lighthouse accessibility ≥ 95; fully keyboard-operable.
+
+---
+
+## 6. Information architecture
+
+**Pages (revised):** `/` · `/work/hostel-hunt` · `/work/nxdesk` (**conditional on employer clearance**) · `/work/eskoolia` (**flagship, conditional on clearance for any visuals; text-and-diagram version needs none**) · `/resume` (print-friendly + PDF download) · 404.
+Selected-work section on home: **three equal cards** (Hostel Hunt, NXdesk, Eskoolia), each with a proof chip and a one-line honest scope.
+
+**Home sections (in order)**
+1. **Hero** — portrait on black; name; one-line positioning ("Backend software engineer — Django, PostgreSQL, Frappe"); honest status line ("2026 CS graduate · App Developer Intern"); CTAs: *Read the Hostel Hunt case study*, *Résumé*, *Email*.
+2. **Selected work** — Hostel Hunt as the feature (logo, role "Solo developer", status chip "Staging / pre-launch"), then equal-weight cards for NXdesk ("Analysis & design") and Eskoolia ("Multi-tenant ERP investigation") — see Revision 2 §2.1. Pixel Transition (optional) on card hover.
+3. **How I build** — four engineering principles, each tied to a concrete Hostel Hunt decision: *no double-booking* (row locks), *tenant isolation*, *idempotent payments*, *operable by default* (outbox, health checks, backups).
+4. **Experience** — Sria Infotech timeline with the résumé's exact scope qualifiers.
+5. **Stack by evidence** — instead of skill bars, three tiers: **Built** (Hostel Hunt), **Worked with** (Frappe/ERPNext, Eskoolia), **Exposure** (Docker, Celery, Playwright, Vue, Odoo).
+6. **Education & certifications.**
+7. **Contact** — email primary; optional form later; LinkedIn/GitHub once supplied. Phone not shown publicly (spam/privacy; recommend, owner decides).
+
+**Signature elements (distinctive, honest)**
+- **Evidence ledger:** every claim carries a proof chip (*Shipped to staging* · *Design/analysis* · *Exposure* · *Self-reported*). Turns the résumé's honesty into a visible trust signal.
+- **Concurrency explainer** (Hostel Hunt page): a small SVG/GSAP illustration of two students trying to hold the same bed under `SELECT … FOR UPDATE SKIP LOCKED`, labelled "illustration, not live data". No fabricated metrics.
+
+**Project-detail strategy (Hostel Hunt):** problem → system map (3 codebases / 12 apps) → 4 decisions with trade-offs (outbox vs Celery/Redis; row locks vs optimistic; tenant scoping approach; sandbox-first payments) → reliability & ops → testing (self-reported) → incident (secret rotation) → **"What's not done yet"** (no Play Store launch) → links (repo/staging/demo when supplied).
+**NXdesk (NXERP + Helpdesk):** a "design note" case study — authn vs authz, post-login routing, option comparisons, Helpdesk workflow specs, branching/PR process. No client data, internal screenshots or logos without written clearance.
+**Eskoolia (flagship):** "Inside a multi-tenant school ERP" — how tenancy is modelled (tenant context, scoped querysets, isolation), role/permission model (RBAC/ABAC), Celery/Redis worker and scheduled-job discovery, N+1/performance findings; owner's own diagrams; a "What I personally changed" box that is filled only with evidenced items. Screenshots only with clearance and neutral sample data.
+
+---
+
+## 7. Component inventory and architecture
+
+**Stack:** Next.js (App Router) · TypeScript · Tailwind · `lenis` · `gsap` + `@gsap/react` · MDX or typed TS data for content · static export · Vitest (unit) + Playwright (smoke/a11y) · ESLint/Prettier · GitHub Actions.
+
+```
+src/
+  app/                (routes: /, /work/[slug], /resume, not-found)
+  content/            (typed data: profile, experience, projects, skills + MDX case studies)
+  components/
+    layout/           Nav, Footer, SectionShell, SkipLink
+    motion/           SmoothScrollProvider (Lenis+GSAP ticker), Reveal, SplitLines, useReducedMotion
+    ui/               Button, Chip(ProofChip), Card, Link, Tabs
+    sections/         Hero, SelectedWork, Principles, ExperienceTimeline, StackByEvidence, Education, Contact
+    work/             CaseStudyLayout, SystemMap, DecisionCard, ConcurrencyExplainer
+  styles/             tokens.css (CSS variables), globals.css
+  lib/                seo, analytics (optional, privacy-first), utils
+public/               optimised images, résumé PDF, OG images
+```
+Principles: content separate from presentation (one TS schema → résumé page, home, JSON-LD `Person`); all motion behind one provider; no animation library other than GSAP; components copied from React Bits live in `components/vendor/` with licence header and unused props removed.
+
+---
+
+## 8. Phase 2 task plan (ordered by dependency)
+
+Effort = focused hours for one developer with the inputs in hand.
+
+| # | Task | Depends on | Acceptance criteria | Est. |
+|---|---|---|---|---|
+| 2.0 | Housekeeping: new repo outside OneDrive, `git init`, read licences (GSAP Terms, React Bits LICENSE), freeze content decisions | Owner answers Q1–Q9 | Repo builds empty; licence notes committed | 2–3 h |
+| 2.1 | Scaffold Next.js+TS+Tailwind, lint/format, CI, static export | 2.0 | `build` + `lint` pass in CI | 3–4 h |
+| 2.2 | Design tokens, fonts, base typography, layout primitives | 2.1 | Tokens documented; AA contrast verified | 4–6 h |
+| 2.3 | Content layer from résumé (typed schema; proof-chip taxonomy) | 2.0 | Every statement traceable to résumé/owner evidence; no PII beyond owner-approved | 3–4 h |
+| 2.4 | Motion foundation: Lenis+GSAP provider, reduced-motion gate, Reveal/SplitLines | 2.2 | Reduced-motion = no motion, instant anchors; no jank at 60 fps on mid phone | 4–6 h |
+| 2.5 | Nav, footer, skip link, mobile menu | 2.2 | Full keyboard + screen-reader path | 3–4 h |
+| 2.6 | Hero with portrait + RD mark (needs vector/transparent logo) | 2.4, assets | LCP < 2.5 s; no layout shift; works at 360–1920 px | 6–8 h |
+| 2.7 | Selected work, principles, experience, stack-by-evidence, education | 2.3–2.5 | All qualifiers from §3.2 preserved verbatim in meaning | 10–14 h |
+| 2.8 | Hostel Hunt case study + SystemMap + ConcurrencyExplainer | 2.4, screenshots/diagram inputs | Reads standalone; explainer has static fallback; no invented numbers | 12–18 h |
+| 2.9 | NXdesk design-note page (visuals only if cleared) | Employer clearance | Contains no internal screenshots/data unless cleared | 4–6 h |
+| 2.9b | Eskoolia flagship page (owner's notes + diagrams; visuals only if cleared) | Owner notes, clearance | Every claim traceable to owner evidence; "implementation ownership" wording matches résumé | 6–10 h |
+| 2.8b | Hostel Hunt "rent lifecycle" device-frame sequence from re-captured screens | 2.8, screenshots re-captured with neutral data | No raw template tokens; prototype vs running app labelled | 4–6 h |
+| 2.10 | Contact (mailto; optional form w/ server-side secret handling), résumé page + PDF | 2.7 | Form (if built) has spam protection and no client-side secrets | 4–8 h |
+| 2.11 | SEO/OG/JSON-LD, favicon set from RD mark, sitemap | 2.6 | Valid structured data; social preview checked | 3–4 h |
+| 2.12 | QA: a11y audit, Lighthouse, cross-browser/device, reduced-motion pass | all | Budgets in §5 met; zero critical axe issues | 6–8 h |
+| 2.13 | Deploy + domain + rollback note | 2.12 | Preview and production URLs; documented rollback | 2–3 h |
+
+Total ≈ 80–115 hours (was 65–95; added the Eskoolia page and the rent-lifecycle sequence). Largest swing factors: employer clearance for NXdesk/Eskoolia visuals, and your Eskoolia notes.
+
+---
+
+## 9. Blockers and manual actions
+
+1. **Reference:** share the selected portfolio's URL/repo, or confirm the Unifex folder is it (Q1).
+2. **Taste skill:** run in Claude Code: `/plugin marketplace add Leonxlnx/taste-skill`, then `/plugin install taste-skill@taste-skill`. Verify it appears in `/skills`.
+3. **21st.dev MCP (optional):** `npx @21st-dev/cli@latest init --client claude`; create the key at 21st.dev/mcp yourself; never commit or paste it. Paid calls need your explicit approval.
+4. **Unresolved resources:** send exact official URLs for *Logo Motion*, *Animmasterlib*, *Pixel Fades*, and say whether *Skiper UI*/*Vengeance UI* are the ones I found.
+5. **OriginKit:** open originkit.dev, copy its licence and install instructions (my fetch returned only the title).
+6. **Assets needed:** RD logo as SVG or transparent PNG (≥ 512 px); original-resolution portrait; Hostel Hunt screenshots (student app, owner dashboard), architecture/ER diagram, and repo/staging/demo links; résumé PDF for download; chosen domain.
+7. **Employer clearance:** written OK from Sria Infotech before any NXERP/NXdesk content or logo is public.
+8. **Template licence:** if any Unifex code/imagery is to be reused, provide proof of licence; otherwise none will be.
+
+### Questions (essential only) — updated in Revision 2
+**Answered:** GitHub (`rohanaarup`), repo access (verified), resource URLs (resolved above), Hostel Hunt screenshots (received), NXdesk access (received).
+Still open:
+1. Is the Unifex folder the "selected reference", or is there a separate URL/repo? (Not answered yet.)
+2. LinkedIn URL?
+3. Do you have Sria Infotech's **permission to publish** NXdesk and Eskoolia material (screens, logo, descriptions)? Access ≠ permission. Even a short written OK is enough.
+4. **Eskoolia:** what did you personally build, change or fix in the ~1.5 months (commits/tickets/PRs, or someone who can confirm)? And send your own notes/diagrams on tenancy, RBAC/ABAC, Celery/Redis and the N+1 findings.
+5. **NXdesk:** did you build the launcher/landing page in the screenshot, or only analyse/specify it?
+6. Hostel Hunt: merge or tag `phase-9-admin-panel`; confirm the Android-device payment test; confirm production DEBUG/state; re-capture the two screens with raw `{{ }}` tokens.
+7. Is "Aarupa Matrix" your brand? And which Hostel Hunt logo is canonical (orange rounded square vs the door "D" mark)?
+8. Phone number: public, click-to-reveal, or not shown? (Received; not written anywhere.)
+9. RD logo: canonical variant, vector/transparent export, and how it was created.
+10. Which notes-only items (Railway→Supabase, Ollama, Trello, Vite, Clean Architecture, SSH; Neon has modest repo evidence) can you demonstrate in an interview?
+11. Hosting/domain preference?
+12. What "pixel fade" effect did you mean? (pixelfade.com is an unrelated game studio.)
+
+---
+
+## 10. Self-review as critical design lead
+
+- **Weakest assumption:** that the Unifex template is the reference. If a different site was intended, §2 changes.
+- **Thin portfolio risk:** one deep project plus analysis work. The plan answers this with depth and honesty, not padding; but without public links or screenshots the site will feel unproven. This is the real bottleneck, not tooling.
+- **Differentiation:** a dark theme alone is generic. The identity must come from the evidence ledger and concurrency explainer; if those slip, the site slides toward template-ish.
+- **Employer exposure:** NXERP is the most professionally valuable item and the most legally sensitive. Plan B: describe it only on the résumé page at résumé granularity.
+- **Logo/asset quality:** both RD logos are raster and one is effect-heavy; a vector mark is a prerequisite for a crisp favicon/nav.
+- **Evidence limits of this report:** resource details came from summarised page fetches; several licences were page-stated, not read in LICENSE files; the Lenis version is from page text; popularity counts (e.g. repository stars) were not used in decisions. The reference was not seen beyond its preloader.
+- **Trade-off:** choosing Next.js over Astro trades a little performance headroom for skill alignment and React-component compatibility.
+- **Restraint check:** I recommend two runtime dependencies for motion (GSAP, Lenis) and 1–3 vendored components. If the first design review feels "plain", the fix is better type, layout and content — not more libraries.
+
+*Stop point: awaiting owner review. Phase 2 will not begin without explicit approval.*
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script>
+(function () {
+  var raw = document.getElementById('md').textContent;
+  var doc = document.getElementById('doc');
+  try {
+    doc.innerHTML = marked.parse(raw, { gfm: true, breaks: false });
+  } catch (e) {
+    doc.textContent = raw; return;
+  }
+  // wrap tables for horizontal scroll
+  doc.querySelectorAll('table').forEach(function (t) {
+    var w = document.createElement('div'); w.className = 'tw';
+    t.parentNode.insertBefore(w, t); w.appendChild(t);
+  });
+  // decision tags
+  doc.querySelectorAll('td strong').forEach(function (s) {
+    var t = s.textContent.trim();
+    var cls = null;
+    if (/^USE\b/.test(t)) cls = 'use';
+    else if (/^(OPTIONAL|REFERENCE ONLY|Not needed|OPTIONAL DESIGN GUARD)/i.test(t)) cls = 'opt';
+    else if (/^REJECT/.test(t)) cls = 'rej';
+    else if (/^(PENDING|UNRESOLVED)/.test(t)) cls = 'pen';
+    if (cls) { s.className = 'tag ' + cls; }
+  });
+  // external links open in a new tab
+  doc.querySelectorAll('a[href^="http"]').forEach(function (a) { a.target = '_blank'; a.rel = 'noopener'; });
+  // ids + contents (H2 only)
+  var heads = Array.prototype.slice.call(doc.querySelectorAll('h2'));
+  var used = {};
+  var rail = document.getElementById('toc-rail'), mob = document.getElementById('toc-mobile');
+  heads.forEach(function (h, i) {
+    var id = h.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || ('s' + i);
+    if (used[id]) id += '-' + i; used[id] = 1; h.id = id;
+    var label = h.textContent.replace(/\s*\(\d{4}-\d{2}-\d{2}\)\s*/, ' ').replace(/ — .*$/, '').trim();
+    [rail, mob].forEach(function (nav) {
+      var a = document.createElement('a'); a.href = '#' + id; a.textContent = label;
+      if (nav === mob) a.addEventListener('click', function () { document.getElementById('mtoc').open = false; });
+      nav.appendChild(a);
+    });
+  });
+  // scroll spy
+  var links = rail.querySelectorAll('a');
+  function spy() {
+    var cur = 0;
+    heads.forEach(function (h, i) { if (h.getBoundingClientRect().top < 140) cur = i; });
+    links.forEach(function (a, i) { a.classList.toggle('on', i === cur); });
+  }
+  window.addEventListener('scroll', spy, { passive: true }); spy();
+  // theme toggle (per-viewer convenience only)
+  var btn = document.getElementById('themeBtn');
+  btn.addEventListener('click', function () {
+    var root = document.documentElement;
+    var dark = root.getAttribute('data-theme') === 'dark' ||
+      (!root.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    root.setAttribute('data-theme', dark ? 'light' : 'dark');
+  });
+})();
+</script>
+
+</html>
